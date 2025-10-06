@@ -30,10 +30,10 @@ jobs:
           set +e  # Do not stop on errors
           
           ruff check . | tee ruff-report.md
-          RUFF_EXIT=$?
+          RUFF_EXIT=${PIPESTATUS[0]}
           
           pyright | tee pyright-report.md
-          PYRIGHT_EXIT=$?
+          PYRIGHT_EXIT=${PIPESTATUS[0]}
 
           set -e # Bring back the stop on errors
           
