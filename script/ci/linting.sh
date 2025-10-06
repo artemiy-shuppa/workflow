@@ -2,6 +2,8 @@
 
 set -euo pipefail # Strict mode by default
 
+OUTPUT_FILE="${1:-}"
+
 set +e # Temporary disable exit-on-error
 
 # capture both stdout and stderr
@@ -13,16 +15,23 @@ PYRIGHT_EXIT=$?
 
 set -e # Bring back exit-on-error
 
-echo "========================================="
-echo "LINTING: ruff check ."
-echo "========================================="
-echo "${RUFF_OUTPUT}"
-echo
-echo "========================================="
-echo "LINTING: pyright"
-echo "========================================="
-echo "${PYRIGHT_OUTPUT}"
-echo
+REPORT=$(
+  cat <<EOF
+=========================================
+LINTING: ruff check ."
+=========================================
+${RUFF_OUTPUT}"
+
+=========================================
+LINTING: pyright"
+=========================================
+${PYRIGHT_OUTPUT}"
+EOF
+)
+
+if [ -n "${OUTPUT_FILE}" ]; then
+  echo "${}" >
+fi
 
 if [ $RUFF_EXIT -ne 0 ] || [ $PYRIGHT_EXIT -ne 0 ]; then
   echo "❌ Result: FAILED"

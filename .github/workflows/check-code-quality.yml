@@ -27,7 +27,14 @@ jobs:
 
       - name: Run linters
         run: |
+          # Run linting and save report
           script/ci/linting.sh 2>&1 | tee code-quality-report.md
+
+          # Get linting.sh exit code
+          linting_exit_code=${PIPESTATUS[0]}
+
+          # return with same code
+          exit $linting_exit_code
 
       - name: Upload analysis report
         if: always()
