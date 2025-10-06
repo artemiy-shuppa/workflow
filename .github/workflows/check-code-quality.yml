@@ -27,31 +27,11 @@ jobs:
 
       - name: Run linters
         run: |
-          set +e  # Do not stop on errors
-          
-          ruff check . | tee ruff-report.md
-          RUFF_EXIT=${PIPESTATUS[0]}
-          
-          pyright | tee pyright-report.md
-          PYRIGHT_EXIT=${PIPESTATUS[0]}
-
-          set -e # Bring back the stop on errors
-          
-          cat ruff-report.md pyright-report.md > report.md
-          
-          echo "Ruff exit code: $RUFF_EXIT"
-          echo "Pyright exit code: $PYRIGHT_EXIT"
-          
-          if [ $RUFF_EXIT -ne 0 ] || [ $PYRIGHT_EXIT -ne 0 ]; then
-            echo "::error::Linting failed"
-            exit 1
-          fi
+          script/ci/linting.sh 2>&1 | tee code-quality-report.md
 
       - name: Upload analysis report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: code-quality
-          path: |
-            ruff-report.md
-            pyright-report.md
+          name: code-quality-report
+          path: code-quality-report.md
