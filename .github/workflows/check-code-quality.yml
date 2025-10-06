@@ -25,15 +25,27 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
-      - name: Run Ruff
-        id: ruff
-        continue-on-error: true
-        run: ruff check . | tee ruff-report.md
+      - name: Run linters
+        run: |
+          set +e  # Do not stop on errors
+          
+          ruff check . | tee ruff-report.md
+          RUFF_EXIT=$?
+          
+          pyright | tee pyright-report.md
+          PYRIGHT_EXIT=$?
 
-      - name: Run Pyright  
-        id: pyright
-        continue-on-error: true
-        run: pyright | tee pyright-report.md
+          set -e # Bring back the stop on errors
+          
+          cat ruff-report.md pyright-report.md > report.md
+          
+          echo "Ruff exit code: $RUFF_EXIT"
+          echo "Pyright exit code: $PYRIGHT_EXIT"
+          
+          if [ $RUFF_EXIT -ne 0 ] || [ $PYRIGHT_EXIT -ne 0 ]; then
+            echo "::error::Linting failed"
+            exit 1
+          fi
 
       - name: Upload analysis report
         if: always()
@@ -43,9 +55,3 @@ jobs:
           path: |
             ruff-report.md
             pyright-report.md
-
-      - name: Fail if any linter failed
-        if: steps.ruff.conclusion == 'failure' || steps.pyright.conclusion == 'failure'
-        run: |
-            echo "::error::One or more linters failed"
-            exit 1
