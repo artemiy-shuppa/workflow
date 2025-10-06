@@ -29,10 +29,6 @@ ${PYRIGHT_OUTPUT}"
 EOF
 )
 
-if [ -n "${OUTPUT_FILE}" ]; then
-  echo "${}" >
-fi
-
 if [ $RUFF_EXIT -ne 0 ] || [ $PYRIGHT_EXIT -ne 0 ]; then
   echo "❌ Result: FAILED"
   echo "   Ruff exit code: $RUFF_EXIT"
