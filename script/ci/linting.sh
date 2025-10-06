@@ -15,19 +15,16 @@ PYRIGHT_EXIT=$?
 
 set -e # Bring back exit-on-error
 
-REPORT=$(
-  cat <<EOF
-=========================================
-LINTING: ruff check ."
-=========================================
-${RUFF_OUTPUT}"
-
-=========================================
-LINTING: pyright"
-=========================================
-${PYRIGHT_OUTPUT}"
-EOF
-)
+echo "========================================="
+echo "LINTING: ruff check ."
+echo "========================================="
+echo "${RUFF_OUTPUT}"
+echo ""
+echo "========================================="
+echo "LINTING: pyright"
+echo "========================================="
+echo "${PYRIGHT_OUTPUT}"
+echo ""
 
 if [ $RUFF_EXIT -ne 0 ] || [ $PYRIGHT_EXIT -ne 0 ]; then
   echo "❌ Result: FAILED"
