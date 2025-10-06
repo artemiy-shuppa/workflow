@@ -1,3 +1,5 @@
 -r requirements.in
 
 pip-tools # manage dependencies for project
+pyright   # use as linter
+ruff      # use as linter and formatter

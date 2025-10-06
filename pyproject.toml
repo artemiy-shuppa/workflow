@@ -1,0 +1,26 @@
+[tool.ruff]
+# Basic settings
+target-version = "py310"  # target python version
+line-length = 88 # Black standard
+indent-width = 4 #
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+]
+ignore = []
+
+[tool.ruff.format]
+# Formatting settings
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.pyright]
+typeCheckingMode = "basic"  # "off" | "basic" | "standard" | "strict"
+pythonVersion = "3.10"
