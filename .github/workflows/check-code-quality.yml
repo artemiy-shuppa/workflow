@@ -25,22 +25,29 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
-      - name: Run linters
+      - name: Run Ruff
+        id: ruff
+        continue-on-error: true
+        run: ruff check . | tee ruff-report.md
+
+      - name: Run Pyright  
+        id: pyright
+        continue-on-error: true
+        run: pyright | tee pyright-report.md
+
+      - name: Check results
         run: |
-          ruff check . > report.md
-          RUFF_EXIT_CODE=$?
-
-          pyright     >> report.md
-          PYRIGHT_EXIT_CODE=$?
-
-          if [ $RUFF_EXIT_CODE -ne 0 ] || [ $PYRIGHT_EXIT_CODE -ne 0 ]; then
-            echo "One of the linters failed"
+          cat ruff-report.md pyright-report.md > report.md
+          if [ "${{ steps.ruff.outcome }}" == "failure" ] || [ "${{ steps.pyright.outcome }}" == "failure" ]; then
+            echo "::error::One or more linters failed"
             exit 1
           fi
           
       - name: Upload analysis report
-        if: success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: analysis-report
-          path: report.md
+          name: code-quality
+          path: |
+            ruff-report.md
+            pyright-report.md
