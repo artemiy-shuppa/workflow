@@ -35,14 +35,6 @@ jobs:
         continue-on-error: true
         run: pyright | tee pyright-report.md
 
-      - name: Check results
-        run: |
-          cat ruff-report.md pyright-report.md > report.md
-          if [ "${{ steps.ruff.outcome }}" == "failure" ] || [ "${{ steps.pyright.outcome }}" == "failure" ]; then
-            echo "::error::One or more linters failed"
-            exit 1
-          fi
-          
       - name: Upload analysis report
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,3 +43,9 @@ jobs:
           path: |
             ruff-report.md
             pyright-report.md
+
+      - name: Fail if any linter failed
+        if: steps.ruff.conclusion == 'failure' || steps.pyright.conclusion == 'failure'
+        run: |
+            echo "::error::One or more linters failed"
+            exit 1
